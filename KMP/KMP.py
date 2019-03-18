@@ -16,16 +16,10 @@ def knuth_morris_pratt(P,T):
         while j>=0 and T[i]!=P[j]:
             j = R[j]
         j+=1
-        #print("i: ", i," j: ", j)
         if (j==n):
             res.append(i-n+1)
             if n == 1:
                 j = 0
             else:
                 j = R[n-1]
-    #print("R: "R)
     return res
-
-# P = input()
-# T = input()
-# print(knuth_morris_pratt(P,T))

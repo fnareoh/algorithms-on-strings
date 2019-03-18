@@ -1,6 +1,5 @@
 def preprocessing_extended_bad_rule(P):
     n = len(P)
-    ##print("len(P): ", len(P))
     R = {}
     for i in range(n):
         if P[i] not in R:
@@ -39,7 +38,6 @@ def N_preprocessing(P):
 def L_and_l_preprocessing(P):
     n = len(P)
     N = N_preprocessing(P)
-    # print("N: ", N)
     L = [0 for i in range(n)]
     l = [0 for i in range(n)]
     for j in range(n-1):
@@ -52,32 +50,6 @@ def L_and_l_preprocessing(P):
         l[i] = max(l[i],l[i+1])
     l[n-1] = n-1
     return L,l
-
-def dicho(i,a,b,R):
-    if a == b :
-        return i-R[a]
-    m = (a+b)//2
-    if R[m+1] < i :
-        return dicho(i,m+1,b,R)
-    else :
-        return dicho(i,a,m,R)
-
-def bad_rule(i, T_h, R,n):
-    if T_h not in R:
-        return n - i
-    if R[T_h][0] > i :
-        return n - i
-    return dicho(i,0,len(R[T_h])-1,R[T_h])
-
-def good_rule(i,L,l):
-    n = len(L)
-    if i == n:
-        return 1
-    if L[i] > 0 :
-        return n - L[i]
-    else :
-        return n - l[i]
-
 
 def boyer_moore(P,T):
     res = []
@@ -100,15 +72,30 @@ def boyer_moore(P,T):
             else :
                 k = k + 1
         else :
-            # print("h: ", h, "k: ", k, "i: ",i," T[h]: ", T[h])
-            # print("bad rule: ", bad_rule(i,T[h],R,n), "good rule: ", good_rule(i+1,L,l))
-            k = k + max(bad_rule(i,T[h],R,n),good_rule(i+1,L,l))
-        # print("R: ", R)
-        # print("L: ", L)
-        # print("l: ", l)
+            good_rule = 1
+            if i+1 == n:
+                pass
+            elif L[i+1] > 0 :
+                good_rule = n - L[i+1]
+            else :
+                good_rule = n - l[i+1]
+
+            bad_rule = 1
+            if T[h] not in R:
+                bad_rule = i+1
+            elif R[T[h]][0] > i :
+                bad_rule = i+1
+            else :
+                a = 0
+                b = len(R[T[h]])-1
+                while a != b :
+                    mil = (a+b)//2
+                    if R[T[h]][mil+1] < i :
+                        a = mil+1
+                    else :
+                        b = mil
+                bad_rule = i-R[T[h]][a]
+
+            k = k + max(bad_rule,good_rule)
+
     return res
-
-
-# P = input()
-# T = input()
-# print(boyer_moore(P,T))
